@@ -48,7 +48,7 @@ def gen_response_llama3(msg):
         response = client.chat(model='llama3:8b', messages=[
             {
                 'role': 'user',
-                'content': '你是宋学志，你替他回复以下消息：' + msg.text,
+                'content': '你是xxx，你替他回复以下消息：' + msg.text,
             },
         ])['message']['content']
         return response
@@ -79,7 +79,7 @@ myself = bot.self
 
 @bot.register(Group, [TEXT])
 def auto_reply_group(msg):
-    if msg.chat.name == '宋学志家长群':
+    if msg.chat.name == 'xxxx':
         reply = generate_response(msg)
         msg.reply(reply)
 
