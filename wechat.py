@@ -14,25 +14,23 @@ bot = Bot()
 client = Client(host='http://localhost:11434')
 
 # 使用 defaultdict 简化字典初始化
-chatMapping = defaultdict(lambda: [{"role": "system", "content": "你来参与聊天."}])
+memory = defaultdict(lambda: [{"role": "system", "content": "你来参与聊天."}])
 
 def gen_response_qwen(msg):
     obj = msg.chat.name
     cur_message = {'role': 'user', 'content': msg.text}
-    
     # 维护消息历史记录并确保长度不超过 5 条
-    chatMapping[obj].append(cur_message)
-    if len(chatMapping[obj]) > 5:
-        chatMapping[obj].pop(1)
-    
+    memory[obj].append(cur_message)
+    if len(memory[obj]) > 5:
+        memory[obj].pop(1)
     try:
         response = Generation.call(model="qwen-turbo",
-                                   messages=chatMapping[obj],
+                                   messages=memory[obj],
                                    seed=random.randint(1, 10000),
                                    result_format='message')
         if response.status_code == HTTPStatus.OK:
             assistant_output = response['output']['choices'][0]['message']
-            chatMapping[obj].append(assistant_output)
+            memory[obj].append(assistant_output)
             return assistant_output['content']
         else:
             print('Request id: %s, Status code: %s, error code: %s, error message: %s' % (
